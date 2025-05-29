@@ -1,0 +1,376 @@
+import { useState, useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { formatAmount } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import type { ClientUtilization } from "@/schemas/risk-profile.schema";
+import { Icon } from "@/components/ui/icons";
+
+interface CreditUtilizationsSectionProps {
+  requests?: ClientUtilization[];
+}
+
+export function CreditUtilizationsSection({
+  requests,
+}: Readonly<CreditUtilizationsSectionProps>) {
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [filterMode, setFilterMode] = useState<'all' | 'overused'>('all');
+  const [sortBy, setSortBy] = useState<'none' | 'amount' | 'overuse'>('none');
+
+  // Filtrage et tri des données
+  const filteredAndSortedData = useMemo(() => {
+    if (!requests) return [];
+    let data = [...requests];
+
+    // Filtrage
+    if (filterMode === 'overused') {
+      data = data.filter(item => item.mntDepassement > 0);
+    }
+
+    // Tri
+    if (sortBy === 'amount') {
+      data.sort((a, b) => b.mntAuto - a.mntAuto);
+    } else if (sortBy === 'overuse') {
+      data.sort((a, b) => b.mntDepassement - a.mntDepassement);
+    }
+
+    return data;
+  }, [requests, filterMode, sortBy]);
+
+  // Calcul des totaux pour les lignes sélectionnées
+  const selectedTotals = useMemo(() => {
+    const selected = filteredAndSortedData.filter(item => 
+      selectedRows.has(`${item.numCompte}-${item.numAuto}`)
+    );
+
+    return {
+      totalAuto: selected.reduce((sum, item) => sum + item.mntAuto, 0),
+      totalUtil: selected.reduce((sum, item) => sum + item.mntUtil, 0),
+      totalDepassement: selected.reduce((sum, item) => sum + item.mntDepassement, 0),
+      count: selected.length
+    };
+  }, [selectedRows, filteredAndSortedData]);
+
+  // Statistiques globales
+  const globalStats = useMemo(() => {
+    if (!requests) return { totalAuto: 0, totalUtil: 0, overusedCount: 0, utilizationRate: 0, totalAccounts: 0 };
+    
+    const totalAuto = requests.reduce((sum, item) => sum + item.mntAuto, 0);
+    const totalUtil = requests.reduce((sum, item) => sum + item.mntUtil, 0);
+    const overusedCount = requests.filter(item => item.mntDepassement > 0).length;
+    const utilizationRate = totalAuto > 0 ? (totalUtil / totalAuto) * 100 : 0;
+
+    return {
+      totalAuto,
+      totalUtil,
+      overusedCount,
+      utilizationRate,
+      totalAccounts: requests.length
+    };
+  }, [requests]);
+
+  // Gestion de la sélection
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(new Set(filteredAndSortedData.map(item => `${item.numCompte}-${item.numAuto}`)));
+    } else {
+      setSelectedRows(new Set());
+    }
+  };
+
+  const handleSelectRow = (key: string, checked: boolean) => {
+    const newSelection = new Set(selectedRows);
+    if (checked) {
+      newSelection.add(key);
+    } else {
+      newSelection.delete(key);
+    }
+    setSelectedRows(newSelection);
+  };
+
+  // Fonction pour calculer le pourcentage de dépassement
+  const calculateOverusePercentage = (item: ClientUtilization) => {
+    if (item.mntAuto === 0) return 0;
+    return ((item.mntDepassement / item.mntAuto) * 100);
+  };
+
+  // Fonction pour déterminer la couleur selon le dépassement
+  const getDepassementColor = (item: ClientUtilization) => {
+    if (item.mntDepassement === 0) return '';
+    const percentage = calculateOverusePercentage(item);
+    if (percentage > 20) return 'text-red-600 font-semibold';
+    if (percentage > 10) return 'text-orange-600 font-medium';
+    return 'text-yellow-600';
+  };
+
+  // Fonction pour obtenir le badge de statut
+  const getStatusBadge = (item: ClientUtilization) => {
+    if (item.mntDepassement === 0) {
+      return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Normal</Badge>;
+    }
+    const percentage = calculateOverusePercentage(item);
+    if (percentage > 20) {
+      return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Critique</Badge>;
+    }
+    if (percentage > 10) {
+      return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">Attention</Badge>;
+    }
+    return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Dépassement</Badge>;
+  };
+
+  if (!requests || requests.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Icon name="clipboardList" className="text-muted-foreground" />
+            Consultation des Autorisations-Utilisations
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center py-6 text-muted-foreground">
+            Aucune utilisation trouvée pour ce client
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="space-y-4">
+          <CardTitle className="flex items-center gap-2">
+            <Icon name="clipboardList" className="text-muted-foreground" />
+            Consultation des Autorisations-Utilisations
+          </CardTitle>
+          
+          {/* Statistiques globales */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-600 font-medium">Total Autorisé</p>
+              <p className="text-lg font-bold text-blue-900">
+                {formatAmount(globalStats.totalAuto, requests[0]?.devise || 'MAD')}
+              </p>
+            </div>
+            <div className="p-3 bg-green-50 rounded-lg">
+              <p className="text-sm text-green-600 font-medium">Total Utilisé</p>
+              <p className="text-lg font-bold text-green-900">
+                {formatAmount(globalStats.totalUtil, requests[0]?.devise || 'MAD')}
+              </p>
+            </div>
+            <div className="p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 font-medium">Taux d'Utilisation</p>
+              <div className="flex items-center gap-2">
+                <Progress value={globalStats.utilizationRate} className="flex-1" />
+                <span className="text-sm font-bold">{globalStats.utilizationRate.toFixed(1)}%</span>
+              </div>
+            </div>
+            <div className="p-3 bg-red-50 rounded-lg">
+              <p className="text-sm text-red-600 font-medium">Comptes en Dépassement</p>
+              <p className="text-lg font-bold text-red-900">
+                {globalStats.overusedCount} / {globalStats.totalAccounts}
+              </p>
+            </div>
+          </div>
+
+          {/* Contrôles de filtrage et tri */}
+          <div className="flex flex-wrap gap-4 items-center">
+            <Select value={filterMode} onValueChange={(value: 'all' | 'overused') => setFilterMode(value)}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filtrer les résultats" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les lignes</SelectItem>
+                <SelectItem value="overused">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                    Dépassements uniquement
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={sortBy} onValueChange={(value: 'none' | 'amount' | 'overuse') => setSortBy(value)}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Trier par" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Ordre par défaut</SelectItem>
+                <SelectItem value="amount">Montant autorisé (décroissant)</SelectItem>
+                <SelectItem value="overuse">Dépassement (décroissant)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {selectedRows.size > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedRows(new Set())}
+              >
+                Désélectionner tout ({selectedRows.size})
+              </Button>
+            )}
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent>
+        <div className="max-h-96 overflow-y-auto border rounded-md">
+          <Table>
+            <TableHeader className="sticky top-0 bg-white z-20 shadow">
+              <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={
+                      filteredAndSortedData.length > 0 &&
+                      filteredAndSortedData.every(item => selectedRows.has(`${item.numCompte}-${item.numAuto}`))
+                    }
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Numéro de compte</TableHead>
+                <TableHead>Produit</TableHead>
+                {requests[0]?.productFamily && <TableHead>Famille</TableHead>}
+                <TableHead className="text-right">Montant autorisé</TableHead>
+                <TableHead className="text-right">Montant utilisé</TableHead>
+                <TableHead className="text-right">Dépassement</TableHead>
+                <TableHead className="text-center">Utilisation</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAndSortedData.map((request, index) => {
+                const utilizationRate = request.mntAuto > 0 
+                  ? (request.mntUtil / request.mntAuto) * 100 
+                  : 0;
+                const isOverused = request.mntDepassement > 0;
+                const rowKey = `${request.numCompte}-${request.numAuto}`;
+                
+                return (
+                  <TableRow 
+                    key={`${request.numCompte}-${index}`}
+                    className={cn(
+                      isOverused && "bg-red-50 hover:bg-red-100",
+                      selectedRows.has(rowKey) && "bg-blue-50"
+                    )}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedRows.has(rowKey)}
+                        onCheckedChange={(checked) => 
+                          handleSelectRow(rowKey, checked as boolean)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(request)}
+                    </TableCell>
+                    <TableCell className="font-medium">{request.numCompte}</TableCell>
+                    <TableCell>{request.productName || '-'}</TableCell>
+                    {requests[0]?.productFamily && (
+                      <TableCell className="text-sm text-gray-600">
+                        {request.productFamily || '-'}
+                      </TableCell>
+                    )}
+                    <TableCell className="text-right font-mono">
+                      {formatAmount(request.mntAuto, request.devise)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono">
+                      {formatAmount(request.mntUtil, request.devise)}
+                    </TableCell>
+                    <TableCell className={cn(
+                      "text-right font-mono",
+                      getDepassementColor(request)
+                    )}>
+                      {request.mntDepassement > 0 && (
+                        <div className="flex flex-col items-end">
+                          <span>{formatAmount(request.mntDepassement, request.devise)}</span>
+                          <span className="text-xs">
+                            ({calculateOverusePercentage(request).toFixed(1)}%)
+                          </span>
+                        </div>
+                      )}
+                      {request.mntDepassement === 0 && '-'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Progress 
+                          value={Math.min(utilizationRate, 100)} 
+                          className={cn(
+                            "w-20",
+                            utilizationRate > 100 && "[&>div]:bg-red-500"
+                          )}
+                        />
+                        <span className="text-xs font-medium w-12 text-right">
+                          {utilizationRate.toFixed(0)}%
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              
+              {/* Ligne de total pour les sélections */}
+              {selectedRows.size > 0 && (
+                <TableRow className="bg-blue-100 font-bold border-t-2 border-blue-300">
+                  <TableCell colSpan={requests[0]?.productFamily ? 5 : 4} className="text-blue-900">
+                    Total des {selectedTotals.count} lignes sélectionnées
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-blue-900">
+                    {formatAmount(selectedTotals.totalAuto, requests[0]?.devise || 'MAD')}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-blue-900">
+                    {formatAmount(selectedTotals.totalUtil, requests[0]?.devise || 'MAD')}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-blue-900">
+                    {formatAmount(selectedTotals.totalDepassement, requests[0]?.devise || 'MAD')}
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Légende */}
+        <div className="mt-4 flex flex-wrap gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+            <span>Utilisation normale</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
+            <span>Dépassement léger (&lt;10%)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-orange-100 border border-orange-200 rounded"></div>
+            <span>Dépassement moyen (10-20%)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+            <span>Dépassement critique (&gt;20%)</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
