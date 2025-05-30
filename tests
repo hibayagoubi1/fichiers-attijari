@@ -1,0 +1,1182 @@
+package ma.awb.credit.processing.service;
+
+import ma.awb.credit.client.CreditApiClient;
+import ma.awb.credit.commons.exception.TechnicalException;
+import ma.awb.credit.processing.api.model.EUtiliseDto;
+import ma.awb.credit.processing.api.model.ListUtilizationsDto;
+import ma.awb.credit.processing.api.model.UtilizationDto;
+import ma.awb.credit.processing.domain.CreditLine;
+import ma.awb.credit.processing.domain.EUtilise;
+import ma.awb.credit.processing.mapper.UtilizationMapper;
+import ma.awb.credit.processing.repository.CreditLineRepository;
+import ma.awb.credit.processing.repository.EutiliseRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class EtatAUServiceTest {
+
+    @Mock
+    private CreditApiClient creditApiClient;
+
+    @Mock
+    private CreditLineRepository creditLineRepository;
+
+    @Mock
+    private EutiliseRepository eUtiliseRepository;
+
+    @Mock
+    private UtilizationMapper utilizationMapper;
+
+    @InjectMocks
+    private EtatAUService etatAUService;
+
+    private ListUtilizationsDto mockApiResponse;
+    private CreditLine mockCreditLine;
+    private EUtilise mockEUtilise;
+    private EUtiliseDto mockEUtiliseDto;
+
+    @BeforeEach
+    void setUp() {
+        mockApiResponse = new ListUtilizationsDto();
+        mockCreditLine = createMockCreditLine();
+        mockEUtilise = createMockEUtilise();
+        mockEUtiliseDto = createMockEUtiliseDto();
+    }
+
+    @Test
+    void getEtatAU_WithValidData_ShouldReturnEnrichedDtos() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        List<UtilizationDto> utilizations = Arrays.asList(
+            createUtilizationDto("12345", "100000", "50000"),
+            createUtilizationDto("67890", "200000", "150000")
+        );
+        mockApiResponse.setData(utilizations);
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockApiResponse);
+        when(creditLineRepository.findAllByNumericPartOfEntityReferenceIn(anySet()))
+            .thenReturn(Arrays.asList(mockCreditLine));
+        when(creditLineRepository.findByNumericPartOfEntityReference("12345"))
+            .thenReturn(mockCreditLine);
+        when(utilizationMapper.toEntity(any(), any())).thenReturn(mockEUtilise);
+        when(eUtiliseRepository.findByNumAuto(anyString())).thenReturn(Optional.empty());
+        when(eUtiliseRepository.save(any())).thenReturn(mockEUtilise);
+        when(utilizationMapper.toDtoList(anyList())).thenReturn(Arrays.asList(mockEUtiliseDto));
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getEtatAU(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("Crédit MT", result.get(0).getProductName());
+        assertEquals("Moyen Terme", result.get(0).getProductFamily());
+        verify(creditApiClient).getUtilizationsByReference(typeReference, numeroReference);
+        verify(eUtiliseRepository, atLeastOnce()).save(any());
+    }
+
+    @Test
+    void getEtatAU_WithNoUtilizations_ShouldReturnEmptyList() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "999999";
+        mockApiResponse.setData(new ArrayList<>());
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockApiResponse);
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getEtatAU(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(creditApiClient).getUtilizationsByReference(typeReference, numeroReference);
+        verify(eUtiliseRepository, never()).save(any());
+    }
+
+    @Test
+    void getEtatAU_WithNullKeyUtilizations_ShouldProcessAsUnauthorized() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        List<UtilizationDto> utilizations = Arrays.asList(
+            createUtilizationDto("NULL_KEY_001", "0", "50000"),
+            createUtilizationDto("NULL_KEY_002", "0", "75000")
+        );
+        mockApiResponse.setData(utilizations);
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockApiResponse);
+        when(utilizationMapper.toEntity(isNull(), any())).thenReturn(mockEUtilise);
+        when(eUtiliseRepository.findByNumAuto(anyString())).thenReturn(Optional.empty());
+        when(eUtiliseRepository.save(any())).thenReturn(mockEUtilise);
+        when(utilizationMapper.toDtoList(anyList())).thenReturn(Arrays.asList(mockEUtiliseDto));
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getEtatAU(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        verify(utilizationMapper, times(2)).toEntity(isNull(), any());
+        verify(eUtiliseRepository, times(2)).save(any());
+    }
+
+    @Test
+    void getEtatAU_WithMixedUtilizations_ShouldProcessCorrectly() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        List<UtilizationDto> utilizations = Arrays.asList(
+            createUtilizationDto("12345", "100000", "50000"),  // Autorisée
+            createUtilizationDto("NULL_KEY_001", "0", "25000"), // Non autorisée
+            createUtilizationDto("67890", "200000", "0")        // Autorisée mais montant 0
+        );
+        mockApiResponse.setData(utilizations);
+
+        CreditLine creditLine1 = createMockCreditLine();
+        creditLine1.setNumericPartOfEntityReference("12345");
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockApiResponse);
+        when(creditLineRepository.findAllByNumericPartOfEntityReferenceIn(anySet()))
+            .thenReturn(Arrays.asList(creditLine1));
+        when(utilizationMapper.toEntity(any(), any())).thenReturn(mockEUtilise);
+        when(utilizationMapper.toEntity(isNull(), any())).thenReturn(mockEUtilise);
+        when(eUtiliseRepository.findByNumAuto(anyString())).thenReturn(Optional.empty());
+        when(eUtiliseRepository.save(any())).thenReturn(mockEUtilise);
+        when(utilizationMapper.toDtoList(anyList())).thenReturn(Arrays.asList(mockEUtiliseDto));
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getEtatAU(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        verify(eUtiliseRepository, times(2)).save(any()); // Only 2 saves (montant 0 excluded)
+    }
+
+    @Test
+    void getEtatAU_WhenApiThrowsException_ShouldThrowTechnicalException() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenThrow(new RuntimeException("API Error"));
+
+        // When & Then
+        assertThrows(TechnicalException.class, () -> 
+            etatAUService.getEtatAU(typeReference, numeroReference)
+        );
+    }
+
+    @Test
+    void getEtatAU_WithExistingUtilization_ShouldUpdateInsteadOfCreate() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        List<UtilizationDto> utilizations = Arrays.asList(
+            createUtilizationDto("12345", "100000", "75000")
+        );
+        mockApiResponse.setData(utilizations);
+
+        EUtilise existingUtilise = createMockEUtilise();
+        existingUtilise.setId("existing-id");
+        existingUtilise.setMntUtil(new BigDecimal("50000"));
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockApiResponse);
+        when(creditLineRepository.findAllByNumericPartOfEntityReferenceIn(anySet()))
+            .thenReturn(Arrays.asList(mockCreditLine));
+        when(utilizationMapper.toEntity(any(), any())).thenReturn(mockEUtilise);
+        when(eUtiliseRepository.findByNumAuto("12345")).thenReturn(Optional.of(existingUtilise));
+        when(eUtiliseRepository.save(any())).thenReturn(existingUtilise);
+        when(utilizationMapper.toDtoList(anyList())).thenReturn(Arrays.asList(mockEUtiliseDto));
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getEtatAU(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        ArgumentCaptor<EUtilise> captor = ArgumentCaptor.forClass(EUtilise.class);
+        verify(eUtiliseRepository).save(captor.capture());
+        assertEquals("existing-id", captor.getValue().getId());
+        assertEquals(mockEUtilise.getMntUtil(), captor.getValue().getMntUtil());
+    }
+
+    @Test
+    void getEtatAU_WhenCreditLineNotFound_ShouldTreatAsUnauthorized() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        List<UtilizationDto> utilizations = Arrays.asList(
+            createUtilizationDto("99999", "100000", "50000") // Authorization not in DB
+        );
+        mockApiResponse.setData(utilizations);
+
+        when(creditApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockApiResponse);
+        when(creditLineRepository.findAllByNumericPartOfEntityReferenceIn(anySet()))
+            .thenReturn(new ArrayList<>()); // No credit lines found
+        when(utilizationMapper.toEntity(isNull(), any())).thenReturn(mockEUtilise);
+        when(eUtiliseRepository.findByNumAuto(anyString())).thenReturn(Optional.empty());
+        when(eUtiliseRepository.save(any())).thenReturn(mockEUtilise);
+        when(utilizationMapper.toDtoList(anyList())).thenReturn(Arrays.asList(mockEUtiliseDto));
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getEtatAU(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        verify(utilizationMapper).toEntity(isNull(), any()); // Processed as unauthorized
+    }
+
+    // Helper methods
+    private UtilizationDto createUtilizationDto(String numAuth, String montantAuth, String montantUtil) {
+        UtilizationDto dto = new UtilizationDto();
+        dto.setNumeroAutorisation(numAuth);
+        dto.setMontantDebloque(montantAuth);
+        dto.setMontantUtilisation(montantUtil);
+        dto.setNumeroClient("123456");
+        dto.setNumeroCompte("8003390000001473");
+        return dto;
+    }
+
+    private CreditLine createMockCreditLine() {
+        CreditLine creditLine = new CreditLine();
+        creditLine.setId("credit-line-id");
+        creditLine.setNumericPartOfEntityReference("12345");
+        creditLine.setProductName("Crédit MT");
+        creditLine.setEntityReference("AUTH-12345");
+        // Mock the family
+        DomainReference family = new DomainReference();
+        family.setName("Moyen Terme");
+        creditLine.setFamily(family);
+        return creditLine;
+    }
+
+    private EUtilise createMockEUtilise() {
+        EUtilise eUtilise = new EUtilise();
+        eUtilise.setId("eutilise-id");
+        eUtilise.setNumAuto("12345");
+        eUtilise.setMntUtil(new BigDecimal("75000"));
+        eUtilise.setMntDep(new BigDecimal("25000"));
+        eUtilise.setPrcDep(new BigDecimal("25.0"));
+        return eUtilise;
+    }
+
+    private EUtiliseDto createMockEUtiliseDto() {
+        EUtiliseDto dto = new EUtiliseDto();
+        dto.setNumAuto("12345");
+        dto.setProductName("Crédit MT");
+        dto.setProductFamily("Moyen Terme");
+        dto.setMntAuto(new BigDecimal("100000"));
+        dto.setMntUtil(new BigDecimal("75000"));
+        dto.setMntDepassement(new BigDecimal("0"));
+        return dto;
+    }
+}
+package ma.awb.credit.processing.mapper;
+
+import ma.awb.credit.processing.api.model.EUtiliseDto;
+import ma.awb.credit.processing.api.model.UtilizationDto;
+import ma.awb.credit.processing.domain.CreditLine;
+import ma.awb.credit.processing.domain.DomainReference;
+import ma.awb.credit.processing.domain.EUtilise;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class UtilizationMapperTest {
+
+    private UtilizationMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mapper = Mappers.getMapper(UtilizationMapper.class);
+    }
+
+    @Test
+    void toEntity_WithCreditLineAndNoDepassement_ShouldMapCorrectly() {
+        // Given
+        CreditLine creditLine = createCreditLine("12345", new BigDecimal("100000"));
+        UtilizationDto utilization = createUtilizationDto("12345", "50000");
+
+        // When
+        EUtilise result = mapper.toEntity(creditLine, utilization);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("12345", result.getNumAuto());
+        assertEquals("123456", result.getIdftClient());
+        assertEquals("8003390000001473", result.getNumCompte());
+        assertEquals(new BigDecimal("100000"), result.getMntAuto());
+        assertEquals(new BigDecimal("50000"), result.getMntUtil());
+        assertEquals(BigDecimal.ZERO, result.getMntDep());
+        assertEquals(BigDecimal.ZERO, result.getPrcDep());
+    }
+
+    @Test
+    void toEntity_WithCreditLineAndDepassement_ShouldCalculateCorrectly() {
+        // Given
+        CreditLine creditLine = createCreditLine("12345", new BigDecimal("100000"));
+        UtilizationDto utilization = createUtilizationDto("12345", "150000");
+
+        // When
+        EUtilise result = mapper.toEntity(creditLine, utilization);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(new BigDecimal("100000"), result.getMntAuto());
+        assertEquals(new BigDecimal("150000"), result.getMntUtil());
+        assertEquals(new BigDecimal("50000"), result.getMntDep());
+        assertEquals(new BigDecimal("50.00"), result.getPrcDep());
+    }
+
+    @Test
+    void toEntity_WithNullCreditLine_ShouldMapWithZeroAuth() {
+        // Given
+        UtilizationDto utilization = createUtilizationDto("NULL_KEY_001", "75000");
+
+        // When
+        EUtilise result = mapper.toEntity(null, utilization);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("NULL_KEY_001", result.getNumAuto());
+        assertEquals(BigDecimal.ZERO, result.getMntAuto());
+        assertEquals(new BigDecimal("75000"), result.getMntUtil());
+        assertEquals(new BigDecimal("75000"), result.getMntDep());
+        assertEquals(new BigDecimal("100.00"), result.getPrcDep()); // 100% dépassement
+    }
+
+    @Test
+    void toEntity_WithZeroUtilization_ShouldHaveNoDepassement() {
+        // Given
+        CreditLine creditLine = createCreditLine("12345", new BigDecimal("100000"));
+        UtilizationDto utilization = createUtilizationDto("12345", "0");
+
+        // When
+        EUtilise result = mapper.toEntity(creditLine, utilization);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO, result.getMntUtil());
+        assertEquals(BigDecimal.ZERO, result.getMntDep());
+        assertEquals(BigDecimal.ZERO, result.getPrcDep());
+    }
+
+    @Test
+    void toEntity_WithZeroAuthorization_ShouldCalculate100PercentDepassement() {
+        // Given
+        CreditLine creditLine = createCreditLine("12345", BigDecimal.ZERO);
+        UtilizationDto utilization = createUtilizationDto("12345", "50000");
+
+        // When
+        EUtilise result = mapper.toEntity(creditLine, utilization);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(BigDecimal.ZERO, result.getMntAuto());
+        assertEquals(new BigDecimal("50000"), result.getMntUtil());
+        assertEquals(new BigDecimal("50000"), result.getMntDep());
+        assertEquals(new BigDecimal("100.00"), result.getPrcDep());
+    }
+
+    @Test
+    void toDto_ShouldMapAllFieldsCorrectly() {
+        // Given
+        EUtilise entity = createEUtilise();
+
+        // When
+        EUtiliseDto result = mapper.toDto(entity);
+
+        // Then
+        assertNotNull(result);
+        assertEquals("12345", result.getNumAuto());
+        assertEquals("DOSS123", result.getNumDossier());
+        assertEquals("8003390000001473", result.getNumCompte());
+        assertEquals(123456L, result.getIdftClient());
+        assertEquals("MAD", result.getDevise());
+        assertEquals("2024-01-15", result.getDateUtilization());
+        assertEquals("Crédit MT", result.getProductName());
+        assertEquals("Moyen Terme", result.getProductFamily());
+        assertEquals(new BigDecimal("100000.00"), result.getMntAuto());
+        assertEquals(new BigDecimal("75000.00"), result.getMntUtil());
+        assertEquals(new BigDecimal("0.00"), result.getMntDepassement());
+    }
+
+    @Test
+    void toDtoList_ShouldMapAllEntities() {
+        // Given
+        EUtilise entity1 = createEUtilise();
+        EUtilise entity2 = createEUtilise();
+        entity2.setNumAuto("67890");
+
+        // When
+        List<EUtiliseDto> result = mapper.toDtoList(Arrays.asList(entity1, entity2));
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("12345", result.get(0).getNumAuto());
+        assertEquals("67890", result.get(1).getNumAuto());
+    }
+
+    @Test
+    void toEntity_WithNullUtilization_ShouldReturnNull() {
+        // When
+        EUtilise result = mapper.toEntity(createCreditLine("12345", new BigDecimal("100000")), null);
+
+        // Then
+        assertNull(result);
+    }
+
+    @Test
+    void toDto_WithNullEntity_ShouldReturnNull() {
+        // When
+        EUtiliseDto result = mapper.toDto(null);
+
+        // Then
+        assertNull(result);
+    }
+
+    @Test
+    void calculateDepassement_EdgeCases() {
+        // Test precision des calculs
+        CreditLine creditLine = createCreditLine("12345", new BigDecimal("33333.33"));
+        UtilizationDto utilization = createUtilizationDto("12345", "50000.00");
+
+        EUtilise result = mapper.toEntity(creditLine, utilization);
+
+        assertEquals(new BigDecimal("16666.67"), result.getMntDep());
+        assertEquals(new BigDecimal("50.00"), result.getPrcDep());
+    }
+
+    // Helper methods
+    private CreditLine createCreditLine(String numAuth, BigDecimal limitAmount) {
+        CreditLine creditLine = new CreditLine();
+        creditLine.setNumericPartOfEntityReference(numAuth);
+        creditLine.setEntityReference("AUTH-" + numAuth);
+        creditLine.setLimitAmount(limitAmount);
+        creditLine.setProductName("Crédit MT");
+        
+        DomainReference family = new DomainReference();
+        family.setName("Moyen Terme");
+        creditLine.setFamily(family);
+        
+        return creditLine;
+    }
+
+    private UtilizationDto createUtilizationDto(String numAuth, String montantUtil) {
+        UtilizationDto dto = new UtilizationDto();
+        dto.setNumeroAutorisation(numAuth);
+        dto.setMontantUtilisation(montantUtil);
+        dto.setNumeroClient("123456");
+        dto.setNumeroCompte("8003390000001473");
+        dto.setNumeroContrat("CONT123");
+        dto.setCodeProduit("MT01");
+        return dto;
+    }
+
+    private EUtilise createEUtilise() {
+        EUtilise entity = new EUtilise();
+        entity.setId("uuid-123");
+        entity.setNumAuto("12345");
+        entity.setNumDossier("DOSS123");
+        entity.setNumCompte("8003390000001473");
+        entity.setIdftClient(123456L);
+        entity.setDevise("MAD");
+        entity.setDateUtilisation("2024-01-15");
+        entity.setProductName("Crédit MT");
+        entity.setProductFamily("Moyen Terme");
+        entity.setMntAuto(new BigDecimal("100000.00"));
+        entity.setMntUtil(new BigDecimal("75000.00"));
+        entity.setMntDep(new BigDecimal("0.00"));
+        entity.setPrcDep(new BigDecimal("0.00"));
+        return entity;
+    }
+}
+package ma.awb.credit.customer.care.service;
+
+import ma.awb.credit.processing.api.model.EUtiliseDto;
+import ma.awb.credit.processing.client.EtatAuApiClient;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class EtatAUServiceTest {
+
+    @Mock
+    private EtatAuApiClient etatAuApiClient;
+
+    @InjectMocks
+    private EtatAUService etatAUService;
+
+    @BeforeEach
+    void setUp() {
+        // Reset mocks before each test
+        reset(etatAuApiClient);
+    }
+
+    @Test
+    void getUtilizations_WithValidResponse_ShouldReturnUtilizations() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        List<EUtiliseDto> expectedUtilizations = Arrays.asList(
+            createEUtiliseDto("12345", new BigDecimal("100000")),
+            createEUtiliseDto("67890", new BigDecimal("200000"))
+        );
+        
+        ResponseEntity<List<EUtiliseDto>> mockResponse = 
+            ResponseEntity.ok(expectedUtilizations);
+        
+        when(etatAuApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockResponse);
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getUtilizations(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("12345", result.get(0).getNumAuto());
+        assertEquals("67890", result.get(1).getNumAuto());
+        verify(etatAuApiClient).getUtilizationsByReference(typeReference, numeroReference);
+    }
+
+    @Test
+    void getUtilizations_WithEmptyResponse_ShouldReturnEmptyList() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "999999";
+        
+        ResponseEntity<List<EUtiliseDto>> mockResponse = 
+            ResponseEntity.ok(Collections.emptyList());
+        
+        when(etatAuApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockResponse);
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getUtilizations(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(etatAuApiClient).getUtilizationsByReference(typeReference, numeroReference);
+    }
+
+    @Test
+    void getUtilizations_WithNullResponseBody_ShouldReturnEmptyList() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        ResponseEntity<List<EUtiliseDto>> mockResponse = 
+            ResponseEntity.ok(null);
+        
+        when(etatAuApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockResponse);
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getUtilizations(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getUtilizations_WithNullResponse_ShouldReturnEmptyList() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        when(etatAuApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(null);
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getUtilizations(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getUtilizations_WhenExceptionThrown_ShouldRethrow() {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        RuntimeException expectedException = new RuntimeException("Connection error");
+        
+        when(etatAuApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenThrow(expectedException);
+
+        // When & Then
+        RuntimeException thrown = assertThrows(RuntimeException.class, () ->
+            etatAUService.getUtilizations(typeReference, numeroReference)
+        );
+        
+        assertEquals("Connection error", thrown.getMessage());
+    }
+
+    @Test
+    void getUtilizations_With404Response_ShouldHandleGracefully() {
+        // Given
+        String typeReference = "UNKNOWN";
+        String numeroReference = "000000";
+        
+        ResponseEntity<List<EUtiliseDto>> mockResponse = 
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        
+        when(etatAuApiClient.getUtilizationsByReference(typeReference, numeroReference))
+            .thenReturn(mockResponse);
+
+        // When
+        List<EUtiliseDto> result = etatAUService.getUtilizations(typeReference, numeroReference);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // Helper method
+    private EUtiliseDto createEUtiliseDto(String numAuto, BigDecimal mntAuto) {
+        EUtiliseDto dto = new EUtiliseDto();
+        dto.setNumAuto(numAuto);
+        dto.setNumDossier("DOSS" + numAuto);
+        dto.setNumCompte("8003390000001473");
+        dto.setIdftClient(123456L);
+        dto.setDevise("MAD");
+        dto.setDateUtilization("2024-01-15");
+        dto.setProductName("Crédit MT");
+        dto.setProductFamily("Moyen Terme");
+        dto.setMntAuto(mntAuto);
+        dto.setMntUtil(new BigDecimal("75000"));
+        dto.setMntDepassement(BigDecimal.ZERO);
+        return dto;
+    }
+}
+package ma.awb.credit.customer.care.controllers;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ma.awb.credit.customer.care.service.EtatAUService;
+import ma.awb.credit.processing.api.model.EUtiliseDto;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(EtatAuController.class)
+class EtatAuControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private EtatAUService etatAUService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private List<EUtiliseDto> mockUtilizations;
+
+    @BeforeEach
+    void setUp() {
+        mockUtilizations = Arrays.asList(
+            createEUtiliseDto("12345", new BigDecimal("100000"), new BigDecimal("75000")),
+            createEUtiliseDto("67890", new BigDecimal("200000"), new BigDecimal("250000"))
+        );
+    }
+
+    @Test
+    void getUtilizationByReference_Success() throws Exception {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        when(etatAUService.getUtilizations(typeReference, numeroReference))
+            .thenReturn(mockUtilizations);
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/credit/Utilizations/{typeReference}/{numeroReference}", 
+                typeReference, numeroReference))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", hasSize(2)))
+            .andExpect(jsonPath("$[0].numAuto", is("12345")))
+            .andExpect(jsonPath("$[0].mntAuto", is(100000)))
+            .andExpect(jsonPath("$[0].mntUtil", is(75000)))
+            .andExpect(jsonPath("$[1].numAuto", is("67890")))
+            .andExpect(jsonPath("$[1].mntAuto", is(200000)))
+            .andExpect(jsonPath("$[1].mntUtil", is(250000)));
+
+        verify(etatAUService).getUtilizations(typeReference, numeroReference);
+    }
+
+    @Test
+    void getUtilizationByReference_EmptyResult() throws Exception {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "999999";
+        
+        when(etatAUService.getUtilizations(typeReference, numeroReference))
+            .thenReturn(Collections.emptyList());
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/credit/Utilizations/{typeReference}/{numeroReference}", 
+                typeReference, numeroReference))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    void getUtilizationByReference_WithSpecialCharacters() throws Exception {
+        // Given
+        String typeReference = "COMPTE";
+        String numeroReference = "ACC-123/456";
+        
+        when(etatAUService.getUtilizations(typeReference, numeroReference))
+            .thenReturn(mockUtilizations);
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/credit/Utilizations/{typeReference}/{numeroReference}", 
+                typeReference, numeroReference))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void getUtilizationByReference_ServiceThrowsException() throws Exception {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        when(etatAUService.getUtilizations(typeReference, numeroReference))
+            .thenThrow(new RuntimeException("Service error"));
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/credit/Utilizations/{typeReference}/{numeroReference}", 
+                typeReference, numeroReference))
+            .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void getUtilizationByReference_VerifyJsonStructure() throws Exception {
+        // Given
+        String typeReference = "CLIENT";
+        String numeroReference = "123456";
+        
+        EUtiliseDto singleUtilization = createEUtiliseDto("12345", 
+            new BigDecimal("100000"), new BigDecimal("75000"));
+        
+        when(etatAUService.getUtilizations(typeReference, numeroReference))
+            .thenReturn(Collections.singletonList(singleUtilization));
+
+        // When & Then
+        mockMvc.perform(get("/api/v1/credit/Utilizations/{typeReference}/{numeroReference}", 
+                typeReference, numeroReference))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].numAuto", is("12345")))
+            .andExpect(jsonPath("$[0].numDossier", is("DOSS12345")))
+            .andExpect(jsonPath("$[0].numCompte", is("8003390000001473")))
+            .andExpect(jsonPath("$[0].idftClient", is(123456)))
+            .andExpect(jsonPath("$[0].devise", is("MAD")))
+            .andExpect(jsonPath("$[0].productName", is("Crédit MT")))
+            .andExpect(jsonPath("$[0].productFamily", is("Moyen Terme")))
+            .andExpect(jsonPath("$[0].mntDepassement", is(0)));
+    }
+
+    @Test
+    void getUtilizationByReference_MissingPathVariables() throws Exception {
+        // When & Then
+        mockMvc.perform(get("/api/v1/credit/Utilizations/CLIENT"))
+            .andExpect(status().isNotFound());
+    }
+
+    // Helper method
+    private EUtiliseDto createEUtiliseDto(String numAuto, BigDecimal mntAuto, BigDecimal mntUtil) {
+        EUtiliseDto dto = new EUtiliseDto();
+        dto.setNumAuto(numAuto);
+        dto.setNumDossier("DOSS" + numAuto);
+        dto.setNumCompte("8003390000001473");
+        dto.setIdftClient(123456L);
+        dto.setDevise("MAD");
+        dto.setDateUtilization("2024-01-15");
+        dto.setProductName("Crédit MT");
+        dto.setProductFamily("Moyen Terme");
+        dto.setMntAuto(mntAuto);
+        dto.setMntUtil(mntUtil);
+        
+        // Calcul du dépassement
+        BigDecimal depassement = mntUtil.subtract(mntAuto);
+        dto.setMntDepassement(depassement.compareTo(BigDecimal.ZERO) > 0 ? depassement : BigDecimal.ZERO);
+        
+        return dto;
+    }
+}
+package ma.awb.credit.processing.repository;
+
+import ma.awb.credit.processing.domain.EUtilise;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@DataJpaTest
+class EUtiliseRepositoryTest {
+
+    @Autowired
+    private TestEntityManager entityManager;
+
+    @Autowired
+    private EutiliseRepository repository;
+
+    private EUtilise testEntity;
+
+    @BeforeEach
+    void setUp() {
+        testEntity = createEUtilise("12345");
+        entityManager.persistAndFlush(testEntity);
+        entityManager.clear();
+    }
+
+    @Test
+    void findByNumAuto_ExistingEntity_ShouldReturnEntity() {
+        // When
+        Optional<EUtilise> result = repository.findByNumAuto("12345");
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals("12345", result.get().getNumAuto());
+        assertEquals("DOSS12345", result.get().getNumDossier());
+        assertEquals(new BigDecimal("100000.00"), result.get().getMntAuto());
+    }
+
+    @Test
+    void findByNumAuto_NonExistingEntity_ShouldReturnEmpty() {
+        // When
+        Optional<EUtilise> result = repository.findByNumAuto("99999");
+
+        // Then
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void save_NewEntity_ShouldPersist() {
+        // Given
+        EUtilise newEntity = createEUtilise("67890");
+
+        // When
+        EUtilise saved = repository.save(newEntity);
+        entityManager.flush();
+        entityManager.clear();
+
+        // Then
+        assertNotNull(saved.getId());
+        Optional<EUtilise> found = repository.findByNumAuto("67890");
+        assertTrue(found.isPresent());
+        assertEquals("67890", found.get().getNumAuto());
+    }
+
+    @Test
+    void save_UpdateExistingEntity_ShouldUpdateValues() {
+        // Given
+        Optional<EUtilise> existing = repository.findByNumAuto("12345");
+        assertTrue(existing.isPresent());
+        
+        EUtilise toUpdate = existing.get();
+        toUpdate.setMntUtil(new BigDecimal("150000.00"));
+        toUpdate.setMntDep(new BigDecimal("50000.00"));
+        toUpdate.setPrcDep(new BigDecimal("50.00"));
+
+        // When
+        repository.save(toUpdate);
+        entityManager.flush();
+        entityManager.clear();
+
+        // Then
+        Optional<EUtilise> updated = repository.findByNumAuto("12345");
+        assertTrue(updated.isPresent());
+        assertEquals(new BigDecimal("150000.00"), updated.get().getMntUtil());
+        assertEquals(new BigDecimal("50000.00"), updated.get().getMntDep());
+        assertEquals(new BigDecimal("50.00"), updated.get().getPrcDep());
+    }
+
+    @Test
+    void findByNumAuto_WithNullKeyPrefix_ShouldFind() {
+        // Given
+        EUtilise nullKeyEntity = createEUtilise("NULL_KEY_001");
+        entityManager.persistAndFlush(nullKeyEntity);
+        entityManager.clear();
+
+        // When
+        Optional<EUtilise> result = repository.findByNumAuto("NULL_KEY_001");
+
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals("NULL_KEY_001", result.get().getNumAuto());
+    }
+
+    @Test
+    void delete_ExistingEntity_ShouldRemove() {
+        // Given
+        Optional<EUtilise> existing = repository.findByNumAuto("12345");
+        assertTrue(existing.isPresent());
+
+        // When
+        repository.delete(existing.get());
+        entityManager.flush();
+        entityManager.clear();
+
+        // Then
+        Optional<EUtilise> deleted = repository.findByNumAuto("12345");
+        assertFalse(deleted.isPresent());
+    }
+
+    // Helper method
+    private EUtilise createEUtilise(String numAuto) {
+        EUtilise entity = new EUtilise();
+        entity.setId(UUID.randomUUID().toString());
+        entity.setNumAuto(numAuto);
+        entity.setNumDossier("DOSS" + numAuto);
+        entity.setNumCompte("8003390000001473");
+        entity.setIdftClient(123456L);
+        entity.setDevise("MAD");
+        entity.setDateUtilisation("2024-01-15");
+        entity.setProductName("Crédit MT");
+        entity.setProductFamily("Moyen Terme");
+        entity.setMntAuto(new BigDecimal("100000.00"));
+        entity.setMntUtil(new BigDecimal("75000.00"));
+        entity.setMntDep(new BigDecimal("0.00"));
+        entity.setPrcDep(new BigDecimal("0.00"));
+        return entity;
+    }
+}
+package ma.awb.credit.processing.repository;
+
+import ma.awb.credit.processing.domain.CreditLine;
+import ma.awb.credit.processing.domain.DomainReference;
+import ma.awb.credit.processing.domain.LoanApplication;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.math.BigDecimal;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@DataJpaTest
+class CreditLineRepositoryTest {
+
+    @Autowired
+    private TestEntityManager entityManager;
+
+    @Autowired
+    private CreditLineRepository repository;
+
+    private LoanApplication loanApplication;
+
+    @BeforeEach
+    void setUp() {
+        // Create and persist a loan application
+        loanApplication = createLoanApplication();
+        entityManager.persistAndFlush(loanApplication);
+
+        // Create and persist credit lines
+        CreditLine line1 = createCreditLine("AUTH-12345", "12345", loanApplication);
+        CreditLine line2 = createCreditLine("AUTH-67890", "67890", loanApplication);
+        CreditLine line3 = createCreditLine("AUTH-00123", "00123", loanApplication);
+        
+        entityManager.persistAndFlush(line1);
+        entityManager.persistAndFlush(line2);
+        entityManager.persistAndFlush(line3);
+        
+        entityManager.clear();
+    }
+
+    @Test
+    void findByNumericPartOfEntityReference_ShouldExtractAndFind() {
+        // When
+        CreditLine result = repository.findByNumericPartOfEntityReference("12345");
+
+        // Then
+        assertNotNull(result);
+        assertEquals("AUTH-12345", result.getEntityReference());
+        assertEquals("12345", result.getNumericPartOfEntityReference());
+    }
+
+    @Test
+    void findByNumericPartOfEntityReference_WithLeadingZeros_ShouldFind() {
+        // When
+        CreditLine result = repository.findByNumericPartOfEntityReference("00123");
+
+        // Then
+        assertNotNull(result);
+        assertEquals("AUTH-00123", result.getEntityReference());
+    }
+
+    @Test
+    void findByNumericPartOfEntityReference_NotFound_ShouldReturnNull() {
+        // When
+        CreditLine result = repository.findByNumericPartOfEntityReference("99999");
+
+        // Then
+        assertNull(result);
+    }
+
+    @Test
+    void findAllByNumericPartOfEntityReferenceIn_ShouldFindMultiple() {
+        // Given
+        Set<String> numAutoList = new HashSet<>(Arrays.asList("12345", "67890", "99999"));
+
+        // When
+        List<CreditLine> results = repository.findAllByNumericPartOfEntityReferenceIn(numAutoList);
+
+        // Then
+        assertNotNull(results);
+        assertEquals(2, results.size());
+        assertTrue(results.stream().anyMatch(cl -> cl.getEntityReference().equals("AUTH-12345")));
+        assertTrue(results.stream().anyMatch(cl -> cl.getEntityReference().equals("AUTH-67890")));
+    }
+
+    @Test
+    void findAllByNumericPartOfEntityReferenceIn_EmptySet_ShouldReturnEmpty() {
+        // Given
+        Set<String> emptySet = new HashSet<>();
+
+        // When
+        List<CreditLine> results = repository.findAllByNumericPartOfEntityReferenceIn(emptySet);
+
+        // Then
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void findByLoanApplicationId_ShouldReturnAllLines() {
+        // When
+        List<CreditLine> results = repository.findByLoanApplicationId(loanApplication.getId());
+
+        // Then
+        assertNotNull(results);
+        assertEquals(3, results.size());
+    }
+
+    @Test
+    void findByLoanApplicationId_NonExisting_ShouldReturnEmpty() {
+        // When
+        List<CreditLine> results = repository.findByLoanApplicationId(UUID.randomUUID().toString());
+
+        // Then
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void testSubstrInstrLogic_ComplexEntityReference() {
+        // Given
+        CreditLine complexLine = createCreditLine("COMPLEX-REF-98765", "98765", loanApplication);
+        entityManager.persistAndFlush(complexLine);
+        entityManager.clear();
+
+        // When
+        CreditLine result = repository.findByNumericPartOfEntityReference("98765");
+
+        // Then
+        assertNotNull(result);
+        assertEquals("COMPLEX-REF-98765", result.getEntityReference());
+    }
+
+    // Helper methods
+    private LoanApplication createLoanApplication() {
+        LoanApplication app = new LoanApplication();
+        app.setId(UUID.randomUUID().toString());
+        app.setReference("LA-2024-001");
+        app.setStatus("APPROVED");
+        return app;
+    }
+
+    private CreditLine createCreditLine(String entityRef, String numericPart, LoanApplication loanApp) {
+        CreditLine line = new CreditLine();
+        line.setId(UUID.randomUUID().toString());
+        line.setEntityReference(entityRef);
+        line.setNumericPartOfEntityReference(numericPart);
+        line.setLoanApplication(loanApp);
+        line.setLimitAmount(new BigDecimal("100000"));
+        line.setProductName("Crédit MT");
+        
+        DomainReference family = new DomainReference();
+        family.setFunctionalId("MT");
+        family.setName("Moyen Terme");
+        line.setFamily(family);
+        
+        return line;
+    }
+}
