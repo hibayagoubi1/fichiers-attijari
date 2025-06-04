@@ -1,0 +1,1630 @@
+[
+  {
+    "id": "67bf9ca91c23df0c9060f86a",
+    "functionalId": "010101004",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert précompté Douane",
+    "description": "Douane",
+    "salable": true,
+    "version": "v6",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733075323000,
+    "activationEndDate": 2114358524000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/crédite851d902-9e21-42bc-9d5a-f8bade3aeef9.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "679cd6722a3d4c1a05daec46",
+      "version": "v10"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "110"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "type": "customizedGenericProduct"
+  },
+  {
+    "id": "67bf9cb5cd8fd5595a1124b3",
+    "functionalId": "010101005",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert précompté Import",
+    "description": "Import",
+    "salable": true,
+    "version": "v5",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733075323000,
+    "activationEndDate": 2114358524000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/crédit4cee1a5d-f1d0-459a-817e-3c615b33e129.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "679cd6722a3d4c1a05daec46",
+      "version": "v10"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "110"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "type": "customizedGenericProduct"
+  },
+  {
+    "id": "67bf9d041c23df0c9060f86c",
+    "functionalId": "010101011",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert amortissable Damane Attassyir",
+    "description": "Damane Attassyir",
+    "salable": true,
+    "version": "v6",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733075323000,
+    "activationEndDate": 2114358524000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/crédit0402fc5b-7ef8-4051-a32c-d4d1fff1c61f.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "679cd6722a3d4c1a05daec46",
+      "version": "v10"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "attribut": "Y",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "102"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "type": "customizedGenericProduct"
+  },
+  {
+    "id": "67d40ef88619c41533db0715",
+    "functionalId": "010101001",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert amortissable standard",
+    "description": "standard",
+    "salable": true,
+    "version": "v8",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733074756000,
+    "activationEndDate": 4075916400000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/crédit2ed1161c-8009-4b77-87f9-f9125834a858.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "67d9763b3ef14e1fc739b82e",
+      "version": "v12"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "102"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "products_link": {},
+    "codes_bilans": [
+      "11110",
+      "13220",
+      "21110",
+      "21210",
+      "21230",
+      "23642",
+      "23643",
+      "43310"
+    ],
+    "type": "customizedGenericProduct"
+  },
+  {
+    "id": "681b2467188a48396e936e05",
+    "functionalId": "010101006",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert amortissable Damane Express",
+    "description": "Damane Express",
+    "salable": true,
+    "version": "v9",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733075323000,
+    "activationEndDate": 2114358524000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/créditd5cacec0-ed35-49e4-ba83-a93dc91ea750.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      },
+      {
+        "id": "67b3412f65292f3ccdd02953",
+        "functionalId": "CREDIT_DAMANE_EXPRESS",
+        "domain": "GROUP",
+        "name": "Crédit: Damane Express",
+        "description": "",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "67fd1e26dd20e658b3ff87c4",
+      "version": "v18"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "attribut": "B",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "102"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "garantiesOptions": [
+      {
+        "option": [
+          {
+            "id": "67615c7d91555d4f5a55f5b4",
+            "functionalId": "CAU04",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Caution solidaire",
+            "description": "Caution solidaire",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "CAUTION SOLIDAIRE DE #035# A HAUTEUR DE #002# DHSADRESSE #073# PROFESSION #074# ",
+              "oldCode": "CAU04",
+              "bamCode": "500",
+              "collateralBAMCode": "8771"
+            }
+          },
+          {
+            "id": "67615c7f91555d4f5a55f5ba",
+            "functionalId": "CAU13",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Aval ccg crea",
+            "description": "Aval ccg crea",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE CREATION A HAUTEUR DE70 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU13",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6761623891555d4f5a55f5fc",
+            "functionalId": "DOC43",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Damane Express Investissement",
+            "description": "Damane Express Investissement",
+            "additionalFields": {
+              "family": "DOC",
+              "descriptionTemplate": "FORMALISATION D'UN CONTRAT DE PRET DAMANE EXPRESS ENCOUVERTURE D'UN CREDIT A TERME AMORTISSABLE DE #002# DHS",
+              "oldCode": "DOC43",
+              "bamCode": "500",
+              "collateralBAMCode": "8779"
+            }
+          },
+          {
+            "id": "6762f11f91555d4f5a55f6c0",
+            "functionalId": "ASS06",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assuremprunt",
+            "description": "Assuremprunt",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS06",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT ENTREPRISECAPITAL GARANTI #002#  DH"
+            }
+          },
+          {
+            "id": "6762f12a91555d4f5a55f6c9",
+            "functionalId": "BAO01",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Billet a ordre",
+            "description": "Billet a ordre",
+            "additionalFields": {
+              "family": "BAO",
+              "oldCode": "DIV01",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "SOUSCRIPTION DE #022#  BILLETS A ORDRE TOTALISANT #002#  DHS"
+            }
+          }
+        ]
+      },
+      {
+        "option": [
+          {
+            "id": "67615c7d91555d4f5a55f5b4",
+            "functionalId": "CAU04",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Caution solidaire",
+            "description": "Caution solidaire",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "CAUTION SOLIDAIRE DE #035# A HAUTEUR DE #002# DHSADRESSE #073# PROFESSION #074# ",
+              "oldCode": "CAU04",
+              "bamCode": "500",
+              "collateralBAMCode": "8771"
+            }
+          },
+          {
+            "id": "67615c7f91555d4f5a55f5bb",
+            "functionalId": "CAU14",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Aval ccg développement",
+            "description": "Aval ccg développement",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE DEVELOPPEMENT A HAUTEUR DE70 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU14",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6761623891555d4f5a55f5fc",
+            "functionalId": "DOC43",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Damane Express Investissement",
+            "description": "Damane Express Investissement",
+            "additionalFields": {
+              "family": "DOC",
+              "descriptionTemplate": "FORMALISATION D'UN CONTRAT DE PRET DAMANE EXPRESS ENCOUVERTURE D'UN CREDIT A TERME AMORTISSABLE DE #002# DHS",
+              "oldCode": "DOC43",
+              "bamCode": "500",
+              "collateralBAMCode": "8779"
+            }
+          },
+          {
+            "id": "6762f11f91555d4f5a55f6c0",
+            "functionalId": "ASS06",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assuremprunt",
+            "description": "Assuremprunt",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS06",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT ENTREPRISECAPITAL GARANTI #002#  DH"
+            }
+          },
+          {
+            "id": "6762f12a91555d4f5a55f6c9",
+            "functionalId": "BAO01",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Billet a ordre",
+            "description": "Billet a ordre",
+            "additionalFields": {
+              "family": "BAO",
+              "oldCode": "DIV01",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "SOUSCRIPTION DE #022#  BILLETS A ORDRE TOTALISANT #002#  DHS"
+            }
+          }
+        ]
+      },
+      {
+        "option": [
+          {
+            "id": "67615c7d91555d4f5a55f5b4",
+            "functionalId": "CAU04",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Caution solidaire",
+            "description": "Caution solidaire",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "CAUTION SOLIDAIRE DE #035# A HAUTEUR DE #002# DHSADRESSE #073# PROFESSION #074# ",
+              "oldCode": "CAU04",
+              "bamCode": "500",
+              "collateralBAMCode": "8771"
+            }
+          },
+          {
+            "id": "67615c7f91555d4f5a55f5bc",
+            "functionalId": "CAU15",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Aval ccg exploitation",
+            "description": "Aval ccg exploitation",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE EXPLOITATION A HAUTEUR DE70 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU15",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6762f11f91555d4f5a55f6c0",
+            "functionalId": "ASS06",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assuremprunt",
+            "description": "Assuremprunt",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS06",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT ENTREPRISECAPITAL GARANTI #002#  DH"
+            }
+          },
+          {
+            "id": "6762f12a91555d4f5a55f6c9",
+            "functionalId": "BAO01",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Billet a ordre",
+            "description": "Billet a ordre",
+            "additionalFields": {
+              "family": "BAO",
+              "oldCode": "DIV01",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "SOUSCRIPTION DE #022#  BILLETS A ORDRE TOTALISANT #002#  DHS"
+            }
+          },
+          {
+            "id": "6762f13091555d4f5a55f6ce",
+            "functionalId": "DOC42",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Daman exploitation fonctionnement",
+            "description": "Daman exploitation fonctionnement",
+            "additionalFields": {
+              "family": "DOC",
+              "oldCode": "DOC42",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "FORMALISATION D'UNE CONVENTION DE CREDIT DAMANEEXPRESS EN COUVERTURE DE LIGNE (S) DE FONCTIONNEMENT"
+            }
+          }
+        ]
+      },
+      {
+        "option": [
+          {
+            "id": "67615c7d91555d4f5a55f5b3",
+            "functionalId": "CAU03",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Caution conjointe et solidaire",
+            "description": "Caution conjointe et solidaire",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "CAUTION CONJ. & SOLIDAIRE DE #035# ET DE #036# A HAUTEUR DE #002#  DHS ADRESSE #073# PROFESSION #074# ",
+              "oldCode": "CAU03",
+              "bamCode": "500",
+              "collateralBAMCode": "8771"
+            }
+          },
+          {
+            "id": "67615c7f91555d4f5a55f5ba",
+            "functionalId": "CAU13",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Aval ccg crea",
+            "description": "Aval ccg crea",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE CREATION A HAUTEUR DE70 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU13",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6761623891555d4f5a55f5fc",
+            "functionalId": "DOC43",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Damane Express Investissement",
+            "description": "Damane Express Investissement",
+            "additionalFields": {
+              "family": "DOC",
+              "descriptionTemplate": "FORMALISATION D'UN CONTRAT DE PRET DAMANE EXPRESS ENCOUVERTURE D'UN CREDIT A TERME AMORTISSABLE DE #002# DHS",
+              "oldCode": "DOC43",
+              "bamCode": "500",
+              "collateralBAMCode": "8779"
+            }
+          },
+          {
+            "id": "6762f11f91555d4f5a55f6c0",
+            "functionalId": "ASS06",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assuremprunt",
+            "description": "Assuremprunt",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS06",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT ENTREPRISECAPITAL GARANTI #002#  DH"
+            }
+          },
+          {
+            "id": "6762f12a91555d4f5a55f6c9",
+            "functionalId": "BAO01",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Billet a ordre",
+            "description": "Billet a ordre",
+            "additionalFields": {
+              "family": "BAO",
+              "oldCode": "DIV01",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "SOUSCRIPTION DE #022#  BILLETS A ORDRE TOTALISANT #002#  DHS"
+            }
+          }
+        ]
+      },
+      {
+        "option": [
+          {
+            "id": "67615c7d91555d4f5a55f5b3",
+            "functionalId": "CAU03",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Caution conjointe et solidaire",
+            "description": "Caution conjointe et solidaire",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "CAUTION CONJ. & SOLIDAIRE DE #035# ET DE #036# A HAUTEUR DE #002#  DHS ADRESSE #073# PROFESSION #074# ",
+              "oldCode": "CAU03",
+              "bamCode": "500",
+              "collateralBAMCode": "8771"
+            }
+          },
+          {
+            "id": "67615c7f91555d4f5a55f5bb",
+            "functionalId": "CAU14",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Aval ccg développement",
+            "description": "Aval ccg développement",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE DEVELOPPEMENT A HAUTEUR DE70 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU14",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6761623891555d4f5a55f5fc",
+            "functionalId": "DOC43",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Damane Express Investissement",
+            "description": "Damane Express Investissement",
+            "additionalFields": {
+              "family": "DOC",
+              "descriptionTemplate": "FORMALISATION D'UN CONTRAT DE PRET DAMANE EXPRESS ENCOUVERTURE D'UN CREDIT A TERME AMORTISSABLE DE #002# DHS",
+              "oldCode": "DOC43",
+              "bamCode": "500",
+              "collateralBAMCode": "8779"
+            }
+          },
+          {
+            "id": "6762f11f91555d4f5a55f6c0",
+            "functionalId": "ASS06",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assuremprunt",
+            "description": "Assuremprunt",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS06",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT ENTREPRISECAPITAL GARANTI #002#  DH"
+            }
+          },
+          {
+            "id": "6762f12a91555d4f5a55f6c9",
+            "functionalId": "BAO01",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Billet a ordre",
+            "description": "Billet a ordre",
+            "additionalFields": {
+              "family": "BAO",
+              "oldCode": "DIV01",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "SOUSCRIPTION DE #022#  BILLETS A ORDRE TOTALISANT #002#  DHS"
+            }
+          }
+        ]
+      },
+      {
+        "option": [
+          {
+            "id": "67615c7d91555d4f5a55f5b3",
+            "functionalId": "CAU03",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Caution conjointe et solidaire",
+            "description": "Caution conjointe et solidaire",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "CAUTION CONJ. & SOLIDAIRE DE #035# ET DE #036# A HAUTEUR DE #002#  DHS ADRESSE #073# PROFESSION #074# ",
+              "oldCode": "CAU03",
+              "bamCode": "500",
+              "collateralBAMCode": "8771"
+            }
+          },
+          {
+            "id": "67615c7f91555d4f5a55f5bc",
+            "functionalId": "CAU15",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Aval ccg exploitation",
+            "description": "Aval ccg exploitation",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE EXPLOITATION A HAUTEUR DE70 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU15",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6762f11f91555d4f5a55f6c0",
+            "functionalId": "ASS06",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assuremprunt",
+            "description": "Assuremprunt",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS06",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT ENTREPRISECAPITAL GARANTI #002#  DH"
+            }
+          },
+          {
+            "id": "6762f12a91555d4f5a55f6c9",
+            "functionalId": "BAO01",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Billet a ordre",
+            "description": "Billet a ordre",
+            "additionalFields": {
+              "family": "BAO",
+              "oldCode": "DIV01",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "SOUSCRIPTION DE #022#  BILLETS A ORDRE TOTALISANT #002#  DHS"
+            }
+          },
+          {
+            "id": "6762f13091555d4f5a55f6ce",
+            "functionalId": "DOC42",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Daman exploitation fonctionnement",
+            "description": "Daman exploitation fonctionnement",
+            "additionalFields": {
+              "family": "DOC",
+              "oldCode": "DOC42",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "FORMALISATION D'UNE CONVENTION DE CREDIT DAMANEEXPRESS EN COUVERTURE DE LIGNE (S) DE FONCTIONNEMENT"
+            }
+          }
+        ]
+      }
+    ],
+    "products_link": {},
+    "type": "customizedGenericProduct"
+  },
+  {
+    "id": "681b26afd2118715a43507bf",
+    "functionalId": "010101009",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert amortissable Intelak Al Moukawil",
+    "description": "Intelak Al Moukawil",
+    "salable": true,
+    "version": "v10",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733075323000,
+    "activationEndDate": 2114358524000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/crédite78a765d-1072-49db-a80f-1024e902d941.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      },
+      {
+        "id": "67ab519fa739a15232cac037",
+        "functionalId": "CREDIT_INTELAK",
+        "domain": "GROUP",
+        "name": "Crédit : Intelak",
+        "description": "crédit intelak",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "67fd1e26dd20e658b3ff87c4",
+      "version": "v18"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "attribut": "N",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "102"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "garantiesOptions": [
+      {
+        "option": [
+          {
+            "id": "6761622e91555d4f5a55f5c8",
+            "functionalId": "CAU27",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Intelak ccg exploitation",
+            "description": "Intelak ccg exploitation",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE EXPLOITATION A HAUTEUR DE80 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU27",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6762f12991555d4f5a55f6c8",
+            "functionalId": "ASS27",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assurance intelak",
+            "description": "Assurance intelak",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS27",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT INTELAKCAPITAL GARANTI #002# DH"
+            }
+          },
+          {
+            "id": "6762f13191555d4f5a55f6cf",
+            "functionalId": "DOC51",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "C intelak fonctionnement",
+            "description": "C intelak fonctionnement",
+            "additionalFields": {
+              "family": "DOC",
+              "oldCode": "DOC51",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "FORMALISATION D'UNE CONVENTION DE CREDIT DAMANE INTELAK ENCOUVERTURE DE LIGNES  DE FONCTIONNEMENT"
+            }
+          }
+        ]
+      }
+    ],
+    "products_link": {},
+    "type": "customizedGenericProduct"
+  },
+  {
+    "id": "681b270bd2118715a43507c0",
+    "functionalId": "010101010",
+    "provider": "007",
+    "periodAmount": 1,
+    "renewable": false,
+    "periodValidity": {
+      "id": "631068ad472eef2bf0ffb39a",
+      "functionalId": "M",
+      "domain": "PERIODICITY",
+      "name": "Mensuelle",
+      "description": "Mensuelle",
+      "additionalFields": {}
+    },
+    "label": "Découvert amortissable Al Moustatmir Al Quaraoui",
+    "description": "Intelak Al Moustatmir Al Quaraoui",
+    "salable": true,
+    "version": "v8",
+    "family": {
+      "id": "67408d4a316f2050246e7538",
+      "functionalId": "LIGNE_CREDIT",
+      "domain": "FAMILY",
+      "name": "Ligne de crédit",
+      "description": "Ligne de crédit",
+      "additionalFields": {}
+    },
+    "canals": [
+      {
+        "id": "6773db4a91555d4f5a55f761",
+        "functionalId": "ATTIJCREDI",
+        "domain": "CANAL",
+        "name": "Attijari Crédit",
+        "description": "Attijari Crédit",
+        "additionalFields": {}
+      }
+    ],
+    "sellingModes": [
+      {
+        "id": "62b59a31f88d31547d83d75c",
+        "functionalId": "SGL",
+        "domain": "SELLING_MODE",
+        "name": "Vente sèche",
+        "description": "Vente sèche",
+        "additionalFields": {}
+      }
+    ],
+    "active": true,
+    "activationStartDate": 1733075323000,
+    "activationEndDate": 2114358524000,
+    "imageLink": "https://catalogue-media-dev-catalogue-tarification-apis.apps.ocpdev.attijariwafa.net/bk-tarification-facturation-rct/catalogue/bct/crédit717a266b-06cb-49bd-8ae8-fef09a3f6249.png?namespace=ns_tarification_facturation_rct",
+    "groupList": [
+      {
+        "id": "67bf8e6a1c23df0c9060f867",
+        "functionalId": "105-AMORT",
+        "domain": "GROUP",
+        "name": "105-TRB CT AMORT",
+        "description": "105-TRB CT AMORT",
+        "additionalFields": {}
+      },
+      {
+        "id": "67ab519fa739a15232cac037",
+        "functionalId": "CREDIT_INTELAK",
+        "domain": "GROUP",
+        "name": "Crédit : Intelak",
+        "description": "crédit intelak",
+        "additionalFields": {}
+      }
+    ],
+    "tagList": [
+      {
+        "id": "677cfe273bc3e2545b9fa855",
+        "functionalId": "INST_CREDIT",
+        "domain": "TAG",
+        "name": "Instruction crédit",
+        "description": "Instruction crédit",
+        "additionalFields": {}
+      },
+      {
+        "id": "67f93436dedc9d19606cfc0e",
+        "functionalId": "LIGNE_CREDIT",
+        "domain": "TAG",
+        "name": "Ligne de Crédit",
+        "description": "Ligne de Crédit",
+        "additionalFields": {
+          "universBesoin": "false"
+        }
+      }
+    ],
+    "additionalAttributes": {},
+    "documentAttachmentList": [],
+    "details": [],
+    "developedDetailList": [],
+    "formSchema": {
+      "id": "67fd1e26dd20e658b3ff87c4",
+      "version": "v18"
+    },
+    "productType": {
+      "id": "010101",
+      "functionalId": "010101",
+      "domain": "CREDIT_TYPE_PRODUIT",
+      "name": "Découvert amortissable",
+      "description": "Découvert amortissable",
+      "additionalFields": {
+        "nature": "0101",
+        "edenCode": "111"
+      }
+    },
+    "edenReference": "111",
+    "attribut": "N",
+    "RISQUE_PRODUIT": {
+      "id": "674092d1316f2050246e7543",
+      "functionalId": "M",
+      "domain": "CREDIT_NIVEAU_RISQUE",
+      "name": "Moyen",
+      "description": "Moyen",
+      "additionalFields": {}
+    },
+    "offer": {
+      "id": "6773d39d91555d4f5a55f758",
+      "functionalId": "001",
+      "domain": "CREDIT_OFFER",
+      "name": "Standard",
+      "description": "Standard",
+      "additionalFields": {}
+    },
+    "bamReference": "00001",
+    "SHORT_TERM": true,
+    "MEDIUM_TERME": false,
+    "LONG_TERM": false,
+    "re-escompte": true,
+    "non re-escompte": true,
+    "decouvert": true,
+    "amortissable": true,
+    "credit_intevs": false,
+    "TRU": [
+      "102"
+    ],
+    "signature_decaiss": {
+      "id": "676ecf8f91555d4f5a55f739",
+      "functionalId": "D",
+      "domain": "CREDIT_SIGNATURE_DECAISS",
+      "name": "D",
+      "description": "D",
+      "additionalFields": {}
+    },
+    "rateTypes": [
+      {
+        "id": "67408829fe8b2a23639d7233",
+        "functionalId": "F",
+        "domain": "CREDIT_TYPE_TAUX",
+        "name": "Fixe",
+        "description": "Fixe",
+        "additionalFields": {}
+      }
+    ],
+    "garantiesOptions": [
+      {
+        "option": [
+          {
+            "id": "6761622e91555d4f5a55f5c8",
+            "functionalId": "CAU27",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Intelak ccg exploitation",
+            "description": "Intelak ccg exploitation",
+            "additionalFields": {
+              "family": "CAU",
+              "descriptionTemplate": "AVAL C.C.G DAMANE EXPLOITATION A HAUTEUR DE80 % DU MONTANT DU CREDIT",
+              "oldCode": "CAU27",
+              "bamCode": "100",
+              "collateralBAMCode": "8311",
+              "unique": "true"
+            }
+          },
+          {
+            "id": "6762f12991555d4f5a55f6c8",
+            "functionalId": "ASS27",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Assurance intelak",
+            "description": "Assurance intelak",
+            "additionalFields": {
+              "family": "ASS",
+              "oldCode": "ASS27",
+              "bamCode": "500",
+              "collateralBAMCode": "8775",
+              "descriptionTemplate": "SOUSCRIPTION D'UN ASSUREMPRUNT INTELAKCAPITAL GARANTI #002# DH"
+            }
+          },
+          {
+            "id": "6762f13591555d4f5a55f6d2",
+            "functionalId": "DOC54",
+            "domain": "CREDIT_COLLATERALS",
+            "name": "Intelak q fonctionnement",
+            "description": "Intelak q fonctionnement",
+            "additionalFields": {
+              "family": "DOC",
+              "oldCode": "DOC54",
+              "bamCode": "500",
+              "collateralBAMCode": "8779",
+              "descriptionTemplate": "FORMALISATION D'UNE CONVENTION DE CREDIT DAMANE INTELAK ALQARAWI EN COUVERTURE DE LIGNE (S) DE FONCTIONNEMENT"
+            }
+          }
+        ]
+      }
+    ],
+    "products_link": {},
+    "type": "customizedGenericProduct"
+  }
+]
